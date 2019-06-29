@@ -4,6 +4,12 @@ public class Bot{
 
     public static void main(String[] a) throws Exception{
 
+        String saludos[] = {
+            "Hola",
+            "Te amo",
+            "Como estas"
+        }
+
         Scanner sc = new Scanner(System.in);
         String nombre= "";
         int edad = 0;
