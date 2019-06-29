@@ -1,4 +1,4 @@
-import java.util.Scanner;
+import java.util.*;
 
 public class Bot{
 
@@ -6,16 +6,17 @@ public class Bot{
 
         String saludos[] = {
             "Hola",
-            "Te amo",
-            "Como estas"
-        }
+            "Que onda",
+            "Como estas",
+            "Que hay"
+        };
 
         Scanner sc = new Scanner(System.in);
         String nombre= "";
         int edad = 0;
         String hobby="";
 
-        System.out.println("Hola, Me llamo Yiyo");
+        System.out.println( saludos[new Random().nextInt(4)] + ", Me llamo Yiyo");
         System.out.println("Cuál es tu nombre");
         nombre =sc.nextLine();
 
