@@ -1,7 +1,9 @@
 package com.db;
 
 import com.pojo.Concept;
+import com.util.Log;
 import com.util.Query;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -17,12 +19,14 @@ public class DAOGlosary {
     private Statement st = null;
     
     private DAOGlosary() throws Exception{
-        connection = DriverManager.getConnection("jdbc:sqlite:glosario_db.db");
+        connection = DriverManager.getConnection("jdbc:sqlite:" + Query.NAME_DB);
         st = connection.createStatement();
         try{
-            st.execute(Query.createDb());    
+            createDb();
         }catch(Exception e){
+            Log.p("No se pudó crear la db");
             e.printStackTrace();
+            
         }
     }
     
@@ -81,5 +85,12 @@ public class DAOGlosary {
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
+    }
+    
+    public void createDb() throws Exception{
+        File database = new File(Query.NAME_DB);
+        
+        if(!database.exists())
+            st.execute(Query.createDb());    
     }
 }

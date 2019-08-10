@@ -11,7 +11,7 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        Document doc = Jsoup.connect("https://listado.mercadolibre.com.mx/iphone-8-rojo#D[A:iphone%208%20rojo]").get();
+        Document doc = Jsoup.connect("https://listado.mercadolibre.com.mx/iphone-xr#D[A:iphone%20xr]").get();
         Elements posts = doc.select(".rowItem");
 
         List<Post> listPost = new ArrayList<>();

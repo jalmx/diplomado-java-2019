@@ -7,6 +7,8 @@ package com.view;
 
 import com.db.DAOGlosary;
 import com.pojo.Concept;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -15,21 +17,38 @@ import javax.swing.JOptionPane;
  */
 public class DescriptionView extends javax.swing.JDialog {
 
-    /**
-     * Creates new form DescriptionView
-     */
+    private Concept conceptInit;
+    private boolean edit = false;
+
     public DescriptionView(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
     }
-    
-    
+
     public DescriptionView(java.awt.Frame parent, boolean modal, String title,
             String concept) {
         super(parent, modal);
         initComponents();
         setTitle(title);//llamo al método de asignar titulo
         labelConcept.setText(concept);
+    }
+
+    public DescriptionView(java.awt.Frame parent, boolean modal, String title, int id)
+            throws Exception {
+        super(parent, modal);
+        initComponents();
+        setTitle(title);//llamo al método de asignar titulo
+        loadConcept(id);
+        edit = true;
+    }
+
+    private void loadConcept(int id) throws Exception {
+        conceptInit = DAOGlosary.getInstance().read(id);
+
+        labelConcept.setText(conceptInit.getName());
+        fieldConcept.setText(conceptInit.getName());
+        areaConcept.setText(conceptInit.getDescription());
+
     }
 
     /**
@@ -159,18 +178,29 @@ public class DescriptionView extends javax.swing.JDialog {
     private void buttonAceptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonAceptActionPerformed
         String name = fieldConcept.getText();
         String description = areaConcept.getText();
-        
+
         Concept concept = new Concept(name, description);
-        
-        try{
-            DAOGlosary db = DAOGlosary.getInstance();
-            db.insert(concept);
-            JOptionPane.showMessageDialog(this, "Guardado con éxito");
-            dispose();    
-        }catch(Exception e){
-            JOptionPane.showMessageDialog(this, "No se puede guardar en la db");
-        }
-         
+
+        if (edit) {
+            try {
+                concept.setId(conceptInit.getId());
+                DAOGlosary.getInstance().actualizar(concept);
+                JOptionPane.showMessageDialog(this, "Se actualizó el concepto");
+                dispose();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "No pudé actualizar el dato");
+            }
+        } else {
+            try {
+                DAOGlosary db = DAOGlosary.getInstance();
+                db.insert(concept);
+                JOptionPane.showMessageDialog(this, "Guardado con éxito");
+                dispose();
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "No se puede guardar en la db");
+            }
+        }//termina el else
+
     }//GEN-LAST:event_buttonAceptActionPerformed
 
     /**

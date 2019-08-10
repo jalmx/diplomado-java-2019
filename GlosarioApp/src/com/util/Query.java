@@ -7,6 +7,7 @@ public class Query {
     private Query() {
     }
     
+    public static final String NAME_DB = "glosario_db.db";
     public static final String NAME_TABLE = "glosary";
     public static final String COLUMN_NAME = "name_concept";
     public static final String COLUMN_DESCRIPTION = "description_concept";
@@ -56,9 +57,7 @@ public class Query {
     }
             
     public static void main(String[] args) {
-    Log.p(
-        createDb()
-    );
+    Log.p(createDb());
     
     Log.p(insertData(new Concept("String", "Es un objeto cádena")));
     

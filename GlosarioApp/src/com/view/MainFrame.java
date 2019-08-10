@@ -5,7 +5,12 @@
  */
 package com.view;
 
+import com.db.DAOGlosary;
+import com.pojo.Concept;
 import com.util.Title;
+import java.util.List;
+import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -13,11 +18,14 @@ import com.util.Title;
  */
 public class MainFrame extends javax.swing.JFrame {
 
+    private List<Concept> listConcept = null;
+
     /**
      * Creates new form MainFrame
      */
     public MainFrame() {
         initComponents();
+        loadConcepts();
     }
 
     /**
@@ -44,6 +52,7 @@ public class MainFrame extends javax.swing.JFrame {
         buttonDelete = new javax.swing.JButton();
         buttonEdit = new javax.swing.JButton();
         buttonRefresh = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
@@ -91,10 +100,10 @@ public class MainFrame extends javax.swing.JFrame {
 
         jPanel2.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
-        listItem.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
+        listItem.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                listItemMouseClicked(evt);
+            }
         });
         jScrollPane1.setViewportView(listItem);
 
@@ -114,10 +123,27 @@ public class MainFrame extends javax.swing.JFrame {
         });
 
         buttonDelete.setText("Eliminar");
+        buttonDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonDeleteActionPerformed(evt);
+            }
+        });
 
         buttonEdit.setText("Editar");
+        buttonEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonEditActionPerformed(evt);
+            }
+        });
 
         buttonRefresh.setText("Actualizar");
+        buttonRefresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonRefreshActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setIcon(new javax.swing.ImageIcon("/Users/josef/Desktop/curso-java/GlosarioApp/lg.png")); // NOI18N
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -129,7 +155,10 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(buttonDelete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(buttonAdd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(buttonEdit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(buttonRefresh, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE))
+                    .addComponent(buttonRefresh, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -143,6 +172,8 @@ public class MainFrame extends javax.swing.JFrame {
                 .addComponent(buttonEdit)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(buttonRefresh)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel3)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -154,7 +185,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 276, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE)
                     .addComponent(buttonSeeMore, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -233,7 +264,77 @@ public class MainFrame extends javax.swing.JFrame {
         DescriptionView ventanaAgregar = new DescriptionView(
                 this, true, Title.ADD_TITLE, Title.ADD_TITLE);//estoy llamando a la ventana
         ventanaAgregar.setVisible(true); //hacemos visible la ventana
+        loadConcepts();
     }//GEN-LAST:event_buttonAddActionPerformed
+
+    private void listItemMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listItemMouseClicked
+
+        int position = listItem.getSelectedIndex();
+
+        Concept concept = listConcept.get(position);
+        String description = concept.getDescription();
+
+        areaDescription.setText(description);
+
+    }//GEN-LAST:event_listItemMouseClicked
+
+    private void buttonRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonRefreshActionPerformed
+        areaDescription.setText("");//limpio el campo de texto
+        loadConcepts();//actualizo los datos
+    }//GEN-LAST:event_buttonRefreshActionPerformed
+
+    private void buttonDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonDeleteActionPerformed
+
+        int position = listItem.getSelectedIndex();
+        Concept concept = listConcept.get(position);
+        int id = concept.getId();
+
+        try {
+            DAOGlosary.getInstance().delete(id);
+            loadConcepts();
+            areaDescription.setText("");
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "No se pudó eliminar");
+        }
+
+    }//GEN-LAST:event_buttonDeleteActionPerformed
+
+    private void buttonEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonEditActionPerformed
+
+        try {
+            int position = listItem.getSelectedIndex();
+            Concept concept = listConcept.get(position);
+            int id = concept.getId();
+
+            DescriptionView ventanaAgregar = new DescriptionView(
+                    this, true, Title.EDIT_TITLE, id);//estoy llamando a la ventana
+            ventanaAgregar.setVisible(true); //hacemos visible la ventana
+            loadConcepts();
+            areaDescription.setText("");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "No has seleccionado ningún concepto");
+        }
+
+    }//GEN-LAST:event_buttonEditActionPerformed
+
+    private void loadConcepts() {
+        DefaultListModel<String> listConceptModel = new DefaultListModel<>();
+
+        try {
+            listConcept = DAOGlosary.getInstance().getAll();
+
+            for (Concept c : listConcept) {
+                listConceptModel.addElement(c.getName());
+            }
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(
+                    this, "No se pudó cargar los datos", "Houston, Tenemos un problema",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+
+        listItem.setModel(listConceptModel);
+    }
 
     /**
      * @param args the command line arguments
@@ -281,6 +382,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JTextField fieldSearch;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
