@@ -2,6 +2,10 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/Users/josef/Downloads/curso-java/GlosarioApp/src/com/db/DAOGlosary.java</file>
+            <file>file:/Users/josef/Downloads/curso-java/GlosarioApp/src/com/view/MainFrame.java</file>
+            <file>file:/Users/josef/Downloads/curso-java/GlosarioApp/src/com/util/Query.java</file>
+        </group>
     </open-files>
 </project-private>

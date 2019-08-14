@@ -7,9 +7,9 @@ package com.view;
 
 import com.db.DAOGlosary;
 import com.pojo.Concept;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.util.Title;
 import javax.swing.JOptionPane;
+import javax.swing.text.JTextComponent;
 
 /**
  *
@@ -23,6 +23,7 @@ public class DescriptionView extends javax.swing.JDialog {
     public DescriptionView(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        setLocationRelativeTo(null);
     }
 
     public DescriptionView(java.awt.Frame parent, boolean modal, String title,
@@ -31,15 +32,17 @@ public class DescriptionView extends javax.swing.JDialog {
         initComponents();
         setTitle(title);//llamo al método de asignar titulo
         labelConcept.setText(concept);
+        setLocationRelativeTo(null);
     }
 
-    public DescriptionView(java.awt.Frame parent, boolean modal, String title, int id)
-            throws Exception {
+    public DescriptionView(java.awt.Frame parent, boolean modal, String title, int id) throws Exception {
         super(parent, modal);
         initComponents();
         setTitle(title);//llamo al método de asignar titulo
         loadConcept(id);
         edit = true;
+        setLocationRelativeTo(null);
+        if(title.equalsIgnoreCase(Title.VIEW_MORE))editableView();
     }
 
     private void loadConcept(int id) throws Exception {
@@ -48,7 +51,17 @@ public class DescriptionView extends javax.swing.JDialog {
         labelConcept.setText(conceptInit.getName());
         fieldConcept.setText(conceptInit.getName());
         areaConcept.setText(conceptInit.getDescription());
+    }
 
+    /**
+     * Método para que deshabilite los campos y no se puedan editar
+     */
+    private void editableView() {
+        JTextComponent[] fields = {fieldConcept, areaConcept};
+
+        for (JTextComponent f : fields) {
+            f.setEditable(false);
+        }
     }
 
     /**
@@ -176,6 +189,12 @@ public class DescriptionView extends javax.swing.JDialog {
     }//GEN-LAST:event_buttonCancelActionPerformed
 
     private void buttonAceptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonAceptActionPerformed
+
+        if(getTitle().contains(Title.VIEW_MORE)){//si abriron la ventana solo para ver más, solo hacemos que se cierrer y termina
+            dispose();
+            return;
+        }
+        
         String name = fieldConcept.getText();
         String description = areaConcept.getText();
 

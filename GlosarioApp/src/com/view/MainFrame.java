@@ -19,13 +19,12 @@ import javax.swing.JOptionPane;
 public class MainFrame extends javax.swing.JFrame {
 
     private List<Concept> listConcept = null;
+    private static final int VIEW_EDIT = 1;//variable para indicar que es la ventana de "edición"
+    private static final int VIEW_MORE = 2;//variable para indicar que es la ventana es "para ver más"
 
-    /**
-     * Creates new form MainFrame
-     */
     public MainFrame() {
         initComponents();
-        loadConcepts();
+        loadConcepts(false);
     }
 
     /**
@@ -74,8 +73,18 @@ public class MainFrame extends javax.swing.JFrame {
 
         fieldSearch.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
         fieldSearch.setToolTipText("Sección para buscar palabra clave");
+        fieldSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fieldSearchActionPerformed(evt);
+            }
+        });
 
         buttonSearch.setText("Buscar");
+        buttonSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonSearchActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -114,6 +123,11 @@ public class MainFrame extends javax.swing.JFrame {
         jScrollPane2.setViewportView(areaDescription);
 
         buttonSeeMore.setText("Ver más");
+        buttonSeeMore.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonSeeMoreActionPerformed(evt);
+            }
+        });
 
         buttonAdd.setText("Agregar");
         buttonAdd.addActionListener(new java.awt.event.ActionListener() {
@@ -142,8 +156,6 @@ public class MainFrame extends javax.swing.JFrame {
                 buttonRefreshActionPerformed(evt);
             }
         });
-
-        jLabel3.setIcon(new javax.swing.ImageIcon("/Users/josef/Desktop/curso-java/GlosarioApp/lg.png")); // NOI18N
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -205,25 +217,50 @@ public class MainFrame extends javax.swing.JFrame {
 
         jLabel2.setText("Dios los bendiga America!!!");
 
-        jMenu1.setText("File");
+        jMenu1.setText("Archivo");
 
         jMenuItem1.setText("Salir");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItem1);
 
         jMenuBar1.add(jMenu1);
 
-        jMenu2.setText("Edit");
+        jMenu2.setText("Editar");
 
         jMenuItem2.setText("Agregar");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
         jMenu2.add(jMenuItem2);
 
         jMenuItem3.setText("Eliminar");
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem3ActionPerformed(evt);
+            }
+        });
         jMenu2.add(jMenuItem3);
 
         jMenuItem4.setText("Editar");
+        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem4ActionPerformed(evt);
+            }
+        });
         jMenu2.add(jMenuItem4);
 
         jMenuItem5.setText("Actualizar");
+        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem5ActionPerformed(evt);
+            }
+        });
         jMenu2.add(jMenuItem5);
 
         jMenuBar1.add(jMenu2);
@@ -261,12 +298,15 @@ public class MainFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void buttonAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonAddActionPerformed
+        addElement();
+    }//GEN-LAST:event_buttonAddActionPerformed
+
+    private void addElement() {
         DescriptionView ventanaAgregar = new DescriptionView(
                 this, true, Title.ADD_TITLE, Title.ADD_TITLE);//estoy llamando a la ventana
         ventanaAgregar.setVisible(true); //hacemos visible la ventana
-        loadConcepts();
-    }//GEN-LAST:event_buttonAddActionPerformed
-
+        loadConcepts(false);
+    }
     private void listItemMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listItemMouseClicked
 
         int position = listItem.getSelectedIndex();
@@ -279,49 +319,76 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_listItemMouseClicked
 
     private void buttonRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonRefreshActionPerformed
-        areaDescription.setText("");//limpio el campo de texto
-        loadConcepts();//actualizo los datos
+        updateView();
     }//GEN-LAST:event_buttonRefreshActionPerformed
 
     private void buttonDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonDeleteActionPerformed
-
-        int position = listItem.getSelectedIndex();
-        Concept concept = listConcept.get(position);
-        int id = concept.getId();
-
-        try {
-            DAOGlosary.getInstance().delete(id);
-            loadConcepts();
-            areaDescription.setText("");
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "No se pudó eliminar");
-        }
+        deleteElement();
 
     }//GEN-LAST:event_buttonDeleteActionPerformed
 
     private void buttonEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonEditActionPerformed
+        editElement();
+    }//GEN-LAST:event_buttonEditActionPerformed
+
+    private void buttonSeeMoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSeeMoreActionPerformed
+        openDescription(VIEW_MORE);
+    }//GEN-LAST:event_buttonSeeMoreActionPerformed
+
+    private void buttonSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSearchActionPerformed
+        loadConcepts(true);
+    }//GEN-LAST:event_buttonSearchActionPerformed
+
+    private void fieldSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fieldSearchActionPerformed
+        loadConcepts(true);
+    }//GEN-LAST:event_fieldSearchActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        addElement();
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
+
+    }//GEN-LAST:event_jMenuItem5ActionPerformed
+
+    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+        deleteElement();
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
+
+    private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
+        editElement();
+    }//GEN-LAST:event_jMenuItem4ActionPerformed
+
+    private void openDescription(int tipe) {
 
         try {
             int position = listItem.getSelectedIndex();
             Concept concept = listConcept.get(position);
             int id = concept.getId();
 
+            String title = (tipe == VIEW_EDIT) ? Title.EDIT_TITLE : Title.VIEW_MORE;
+
             DescriptionView ventanaAgregar = new DescriptionView(
-                    this, true, Title.EDIT_TITLE, id);//estoy llamando a la ventana
+                    this, true, title, id);//estoy llamando a la ventana
             ventanaAgregar.setVisible(true); //hacemos visible la ventana
-            loadConcepts();
+            loadConcepts(false);
             areaDescription.setText("");
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "No has seleccionado ningún concepto");
         }
 
-    }//GEN-LAST:event_buttonEditActionPerformed
+    }
 
-    private void loadConcepts() {
+    private void loadConcepts(boolean search) {
         DefaultListModel<String> listConceptModel = new DefaultListModel<>();
 
         try {
-            listConcept = DAOGlosary.getInstance().getAll();
+            DAOGlosary db = DAOGlosary.getInstance();
+            listConcept = (search == true) ? db.getSearch(fieldSearch.getText()) : db.getAll();
 
             for (Concept c : listConcept) {
                 listConceptModel.addElement(c.getName());
@@ -398,4 +465,26 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JList<String> listItem;
     // End of variables declaration//GEN-END:variables
+
+    private void deleteElement() {
+        try {
+            int position = listItem.getSelectedIndex();
+            Concept concept = listConcept.get(position);
+            int id = concept.getId();
+            DAOGlosary.getInstance().delete(id);
+            loadConcepts(false);
+            areaDescription.setText("");
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "No se pudó eliminar");
+        }
+    }
+
+    private void editElement() {
+        openDescription(VIEW_EDIT);
+    }
+
+    private void updateView() {
+        areaDescription.setText("");//limpio el campo de texto
+        loadConcepts(false);//actualizo los datos
+    }
 }
